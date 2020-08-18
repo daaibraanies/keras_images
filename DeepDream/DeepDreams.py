@@ -95,7 +95,7 @@ num_octave = 3
 octave_scale = 1.4
 iterations = 20
 max_loss = 10.
-image_path = 'sh.jpg'
+image_path = 'aleksa.jpg'
 img = process_image(image_path)
 
 original_shape = img.shape[1:3]
