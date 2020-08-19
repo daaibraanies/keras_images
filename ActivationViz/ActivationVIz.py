@@ -2,9 +2,16 @@ from ActivationViz.preprocess_train import *
 import os
 import keras
 import numpy as np
+import scipy
 import matplotlib.pyplot as plt
 
-def vizualize_layers(layers,activations):
+def resize_img(img, size):
+    img = np.copy(img)
+    factors = (float(size[0]) / img.shape[0],
+               float(size[1]) / img.shape[1])
+    return scipy.ndimage.zoom(img, factors, order=1)
+
+def vizualize_layers(layers,activations,cast_to_size=None):
     """
     Vizualize all the channels for all hidden activations.
     :param layers: list of the model's layers names to be vizualized.
@@ -14,7 +21,10 @@ def vizualize_layers(layers,activations):
     img_per_row = 16
     for layer_name,layer_activation in zip(layers,activations):
         n_features = layer_activation.shape[-1]
-        size = layer_activation.shape[1]
+        if cast_to_size:
+            size = cast_to_size
+        else:
+            size = layer_activation.shape[1]
         ncols = n_features//img_per_row
 
         display_grid = np.zeros((size*ncols,img_per_row*size))
@@ -22,6 +32,8 @@ def vizualize_layers(layers,activations):
         for col in range(ncols):
             for row in range(img_per_row):
                 channel_image = layer_activation[0,:,:,col*img_per_row+row]
+                if cast_to_size:
+                    channel_image = resize_img(channel_image,(cast_to_size,cast_to_size))
                 channel_image  -= channel_image.mean()
                 channel_image /= channel_image.std()
                 channel_image *= 64
@@ -68,7 +80,7 @@ if __name__ =='__main__':
     activations = activation_model.predict(img_tensor)
 
     layer_names = [layer.name for layer in model.layers[:8]]
-    vizualize_layers(layer_names,activations)
+    vizualize_layers(layer_names,activations,cast_to_size=250)
 
 
 
