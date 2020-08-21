@@ -146,7 +146,3 @@ def create_simple_nn(dirdict,mname='activiz_model.h5',verbose=True):
         plt.show()
 
     return model
-
-#train_dir,val_dir,test_dir=create_dataset()
-#dirdict = {'train':train_dir,'val':val_dir,'test':test_dir}
-#create_simple_nn(dirdict)
